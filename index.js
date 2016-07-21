@@ -1,38 +1,52 @@
 const snakeCase = require('snake-case');
 const isPlainObject = require('is-plain-object');
+const isDotNotation = key => (/\./).test(key);
 
-const snakeobj = (data, exceps) => {
+const snakeobj = (data, exclude = []) => {
   if (!isPlainObject(data)) return data;
 
-  return Object.keys(data).reduce((result, key) => {
-    const newKey = isException(key, exceps || []) ? key : snakeCase(key);
-    if (isPlainObject(data[key])) return snakeDeepObject(newKey, result, data[key], exceps);
-    if (Array.isArray(data[key])) return snakeArray(newKey, result, data[key], exceps);
-    return snakePropery(newKey, result, data[key]);
-  }, {});
-};
+  const transform = () => Object.keys(data).reduce(applySnakeCase, {});
 
-const isException = (key, exceps) => exceps.includes(key);
+  const applySnakeCase = (result, key) => {
+    const newKey = buildNewKey(key);
+    if (isPlainObject(data[key])) return snakeDeepObject(newKey, result, data[key]);
+    if (Array.isArray(data[key])) return snakeArray(newKey, result, data[key]);
+    return snakeProperty(newKey, result, data[key]);
+  };
 
-const snakeDeepObject = (newKey, result, data, exceps) => {
-  const func = () => snakeobj(data, exceps);
-  return applyOnResult(newKey, result, func);
-};
+  const buildNewKey = key => {
+    if (isDotNotation(key)) return snakeDotNotation(key);
+    return shouldTransform(key) ? snakeCase(key) : key;
+  };
 
-const snakeArray = (newKey, result, dataArr, exceps) => {
-  const func = () => dataArr.map(item => snakeobj(item, exceps));
-  return applyOnResult(newKey, result, func);
-};
+  const snakeDotNotation = key => key.split('.').map(snakeCase).join('.');
 
-const snakePropery = (newKey, result, data) => {
-  const func = () => data;
-  return applyOnResult(newKey, result, func);
-};
+  const shouldTransform = key => !isException(key, exclude);
 
-const applyOnResult = (newKey, result, func) => {
-  const partial = {};
-  partial[newKey] = func();
-  return Object.assign({}, result, partial);
+  const isException = (key) => exclude.includes(key);
+
+  const snakeDeepObject = (newKey, result, data) => {
+    const func = () => snakeobj(data, exclude);
+    return applyOnResult(newKey, result, func);
+  };
+
+  const snakeArray = (newKey, result, dataArr) => {
+    const func = () => dataArr.map(item => snakeobj(item, exclude));
+    return applyOnResult(newKey, result, func);
+  };
+
+  const snakeProperty = (newKey, result, data) => {
+    const func = () => data;
+    return applyOnResult(newKey, result, func);
+  };
+
+  const applyOnResult = (newKey, result, func) => {
+    const partial = {};
+    partial[newKey] = func();
+    return Object.assign({}, result, partial);
+  };
+
+  return transform();
 };
 
 module.exports = snakeobj;

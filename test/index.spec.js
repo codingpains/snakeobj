@@ -46,9 +46,9 @@ suite('snakeobj object', (test) => {
   });
 
   test('Snakeizes nested dot notation objects', (assert) => {
-    const input = {'persons.lastName': 'doe'};
+    const input = {'person.lastName': 'doe'};
     const out = snakeobj(input);
-    assert('equal', out.persons_last_name, 'doe');
+    assert('equal', out['person.last_name'], 'doe');
   });
 
   test('Snakeizes all but excented keys', (assert) => {
