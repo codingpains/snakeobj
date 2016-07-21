@@ -2,7 +2,7 @@ const snakeCase = require('snake-case');
 const isPlainObject = require('is-plain-object');
 
 const snakeobj = (data, exceps) => {
-  if (!isPlainObject(data)) return;
+  if (!isPlainObject(data)) return data;
 
   return Object.keys(data).reduce((result, key) => {
     const newKey = isException(key, exceps || []) ? key : snakeCase(key);

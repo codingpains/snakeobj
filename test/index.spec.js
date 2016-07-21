@@ -2,10 +2,10 @@ const {suite} = require('suitape');
 const snakeobj = require('./../index');
 
 suite('snakeobj object', (test) => {
-  test('Returns undefined if input is not an object', (assert) => {
+  test('Returns same as input if input is not an object', (assert) => {
     [1, 'hola', true, [{a: 1}], new Date()].forEach(input => {
       const out = snakeobj(input);
-      assert('equal', typeof out, 'undefined');
+      assert('equal', out, input);
     });
   });
 
