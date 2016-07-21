@@ -1,6 +1,6 @@
 {
   "name": "snakeobj",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Changes all properties to camel case, except for the provided exceptions.",
   "main": "index.js",
   "scripts": {
