@@ -3,7 +3,7 @@ const snakeobj = require('./../index');
 
 suite('snakeobj object', (test) => {
   test('Returns same as input if input is not an object', (assert) => {
-    [1, 'hola', true, [{a: 1}], new Date()].forEach(input => {
+    [1, 'hola', true, new Date()].forEach(input => {
       const out = snakeobj(input);
       assert('equal', out, input);
     });
@@ -64,5 +64,12 @@ suite('snakeobj object', (test) => {
     const out = snakeobj(input, ['$gt', '$lt']);
     assert('equal', out.persons[0].birth_date['$gt'], date);
     assert('equal', out.persons[1].birth_date['$lt'], date);
+  });
+
+  test('Snakeizes arrays', (assert) => {
+    const input = [{fooBar: 'baz'}, {hogeKage: 'piyo'}];
+    const out = snakeobj(input);
+    assert('equal', out[0].foo_bar, 'baz');
+    assert('equal', out[1].hoge_kage, 'piyo');
   });
 });

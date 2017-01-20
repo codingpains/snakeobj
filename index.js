@@ -3,6 +3,7 @@ const isPlainObject = require('is-plain-object');
 const isDotNotation = key => (/\./).test(key);
 
 const snakeobj = (data, exclude = []) => {
+  if (Array.isArray(data)) return data.map(item => snakeobj(item, exclude));
   if (!isPlainObject(data)) return data;
 
   const transform = () => Object.keys(data).reduce(applySnakeCase, {});
