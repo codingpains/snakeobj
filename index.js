@@ -22,9 +22,9 @@ const snakeobj = (data, exclude = []) => {
 
   const snakeDotNotation = key => key.split('.').map(snakeCase).join('.');
 
-  const shouldTransform = key => !isException(key, exclude);
+  const shouldTransform = key => !isException(key);
 
-  const isException = (key) => exclude.includes(key);
+  const isException = (key) => exclude.indexOf(key) > -1;
 
   const snakeDeepObject = (newKey, result, data) => {
     const func = () => snakeobj(data, exclude);
